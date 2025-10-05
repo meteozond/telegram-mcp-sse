@@ -2,10 +2,11 @@
 
 ## Description
 
-Docker image for running MCP-proxy with Telegram integration. Based on 
-`ghcr.io/sparfenyuk/mcp-proxy:latest` and includes 
-[telegram-mcp](https://github.com/chigwell/telegram-mcp) for multiple agents
-working with Telegram API.
+Docker image for running MCP-proxy with Telegram integration.
+Based on [mcp-proxy](ghcr.io/sparfenyuk/mcp-proxy:latest) 
+and [telegram-mcp](https://github.com/chigwell/telegram-mcp).
+The main goal is to enable simultaneous interaction with multiple agents via 
+the Telegram API.
 
 ## Features
 

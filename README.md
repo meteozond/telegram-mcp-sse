@@ -35,7 +35,7 @@ Run the container in interactive mode to create your Telegram session:
 docker run --rm -it \
   -e TELEGRAM_API_ID=your_api_id \
   -e TELEGRAM_API_HASH=your_api_hash \
-  -v ./session.session:/session.session \
+  -v ./:/data \
   meteozond/telegram-mcp-sse:latest
 ```
 
@@ -55,7 +55,7 @@ When session is created, run with port mapping:
 docker run \
   -e TELEGRAM_API_ID=your_api_id \
   -e TELEGRAM_API_HASH=your_api_hash \
-  -v ./session.session:/session.session \
+  -v ./:/data \
   -p 8080:8080 \
   meteozond/telegram-mcp-sse:latest
 ```
@@ -65,14 +65,14 @@ After starting, if `session.session` exists the server will be available at
 
 ## Environment Variables
 
-| Variable                  | Default Value | Description                          |
-|---------------------------|---------------|--------------------------------------|
-| `TELEGRAM_API_ID`         | -             | Telegram API ID (required)           |
-| `TELEGRAM_API_HASH`       | -             | Telegram API Hash (required)         |
-| `TELEGRAM_SESSION_NAME`   | `session`     | Session file name                    |
-| `TELEGRAM_SESSION_STRING` | -             | Session string (alternative to file) |
-| `MCP_PROXY_HOST`          | `0.0.0.0`     | MCP proxy host                       |
-| `MCP_PROXY_PORT`          | `8080`        | MCP proxy port                       |
+| Variable                  | Default Value   | Description                          |
+|---------------------------|-----------------|--------------------------------------|
+| `TELEGRAM_API_ID`         | -               | Telegram API ID (required)           |
+| `TELEGRAM_API_HASH`       | -               | Telegram API Hash (required)         |
+| `TELEGRAM_SESSION_NAME`   | `/data/session` | Session file name                    |
+| `TELEGRAM_SESSION_STRING` | -               | Session string (alternative to file) |
+| `MCP_PROXY_HOST`          | `0.0.0.0`       | MCP proxy host                       |
+| `MCP_PROXY_PORT`          | `8080`          | MCP proxy port                       |
 
 
 ## Connecting to MCP Proxy

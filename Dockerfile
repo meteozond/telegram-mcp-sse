@@ -9,9 +9,9 @@ ENV MCP_PROXY_HOST="0.0.0.0"
 ENV MCP_PROXY_PORT="8080"
 
 RUN apk add --no-cache git python3 py3-pip && \
-    git clone https://github.com/chigwell/telegram-mcp.git /telegram-mcp-src && \
-    cd /telegram-mcp-src && \
-    pip install -r requirements.txt
+    git clone --depth 1 https://github.com/chigwell/telegram-mcp.git /telegram-mcp-src && \
+    pip install --no-cache-dir -r /telegram-mcp-src/requirements.txt && \
+    rm -rf /telegram-mcp-src/.git
 
 ENV PATH="/usr/local/bin:${PATH}"
 
@@ -31,7 +31,7 @@ if [ -t 0 ] && [ -n "$TELEGRAM_API_ID" ] && [ -n "$TELEGRAM_API_HASH" ] && \
     exit 0
 fi
 
-echo ">>> Starting mcp-proxy for telegram-mcp..."
+echo ">>> Starting mcp-proxy (/sse and /mcp) on $MCP_PROXY_HOST:$MCP_PROXY_PORT..."
 exec mcp-proxy --host=$MCP_PROXY_HOST --port=$MCP_PROXY_PORT --pass-environment python3 /telegram-mcp-src/main.py "$@"
 
 EOF

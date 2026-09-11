@@ -2,16 +2,17 @@
 
 ## Description
 
-Docker image for running MCP-proxy with Telegram integration.
-Based on [mcp-proxy](ghcr.io/sparfenyuk/mcp-proxy:latest) 
-and [telegram-mcp](https://github.com/chigwell/telegram-mcp).
-The main goal is to enable simultaneous interaction with multiple agents via 
-the Telegram API.
+Docker image running [telegram-mcp](https://github.com/chigwell/telegram-mcp)
+behind [mcp-proxy](https://github.com/sparfenyuk/mcp-proxy), which exposes both
+the SSE (`/sse`) and streamable HTTP (`/mcp`) endpoints on one port. The main
+goal is to enable simultaneous interaction with multiple agents via the
+Telegram API.
 
 ## Features
 
 - 🚀 Quick start MCP server with Telegram support
-- 🔄 Automatic session initialization on first run
+- 🔑 Interactive login on first run (creates the session file)
+- 🔀 Both `/sse` and `/mcp` endpoints served on one port
 - 📦 Ready-to-use image with pre-installed dependencies
 - 🤖 Multi-agent support - can serve multiple AI agents simultaneously
 
@@ -29,7 +30,7 @@ Before starting, you need to get your API credentials:
 
 ### 2. Initialize Telegram session (first time only)
 
-Run the container in interactive mode to create your Telegram session:
+Run the container in interactive mode (`-it`) to create your Telegram session:
 
 ```bash
 docker run --rm -it \
@@ -43,13 +44,14 @@ You will be prompted to:
 1. Enter your phone number (with country code, e.g., +1234567890)
 2. Enter the confirmation code sent to your Telegram
 3. Enter your 2FA password (if enabled)
-4. Exit the container after successful authentication
 
-After successful authentication, the session will be saved to `session.session` file.
+After successful authentication the session is saved to `session.session` and
+the container exits. Login runs only when there is no session yet and stdin is
+a terminal; otherwise the server starts straight away.
 
-### 3. Run the container with MCP proxy
+### 3. Run the server
 
-When session is created, run with port mapping:
+Once the session exists, run with port mapping (can be detached with `-d`):
 
 ```bash
 docker run \
@@ -60,24 +62,24 @@ docker run \
   meteozond/telegram-mcp-sse:latest
 ```
 
-After starting, if `session.session` exists the server will be available at 
-`http://localhost:8080` and ready to serve multiple AI agents.
+The server is available at `http://localhost:8080/sse` and
+`http://localhost:8080/mcp`, ready to serve multiple AI agents.
 
 ## Environment Variables
 
-| Variable                  | Default Value   | Description                          |
-|---------------------------|-----------------|--------------------------------------|
-| `TELEGRAM_API_ID`         | -               | Telegram API ID (required)           |
-| `TELEGRAM_API_HASH`       | -               | Telegram API Hash (required)         |
-| `TELEGRAM_SESSION_NAME`   | `/data/session` | Session file name                    |
-| `TELEGRAM_SESSION_STRING` | -               | Session string (alternative to file) |
-| `MCP_PROXY_HOST`          | `0.0.0.0`       | MCP proxy host                       |
-| `MCP_PROXY_PORT`          | `8080`          | MCP proxy port                       |
+| Variable                  | Default Value   | Description                                  |
+|---------------------------|-----------------|----------------------------------------------|
+| `TELEGRAM_API_ID`         | -               | Telegram API ID (required)                   |
+| `TELEGRAM_API_HASH`       | -               | Telegram API Hash (required)                 |
+| `TELEGRAM_SESSION_NAME`   | `/data/session` | Absolute path to the session file (no ext.)  |
+| `TELEGRAM_SESSION_STRING` | -               | Session string (alternative to file)         |
+| `MCP_PROXY_HOST`          | `0.0.0.0`       | Host the proxy binds to                      |
+| `MCP_PROXY_PORT`          | `8080`          | Port the proxy exposes                       |
 
+## Connecting
 
-## Connecting to MCP Proxy
-
-After startup, server is available at: `http://localhost:8080/sse`
+- SSE endpoint: `http://localhost:8080/sse`
+- Streamable HTTP endpoint: `http://localhost:8080/mcp`
 
 ## mcp.json Configuration
 
@@ -93,7 +95,7 @@ After startup, server is available at: `http://localhost:8080/sse`
 
 ## Available Methods
 
-MCP proxy provides access to all telegram-mcp methods:
+The server provides access to all telegram-mcp methods:
 
 - **Chats and Messages**: `list_chats`, `get_messages`, `send_message`, 
   `edit_message`, `delete_message`
@@ -116,8 +118,8 @@ For complete method list, see [telegram-mcp documentation](https://github.com/ch
 
 If you have session issues:
 
-1. Delete `session.session` file
-2. Restart in interactive mode to create new session
+1. Delete the `session.session` file
+2. Restart in interactive mode (`-it`) to create a new session
 
 ## Links
 

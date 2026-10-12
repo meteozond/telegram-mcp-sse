@@ -8,8 +8,11 @@ ENV TELEGRAM_SESSION_STRING=""
 ENV MCP_PROXY_HOST="0.0.0.0"
 ENV MCP_PROXY_PORT="8080"
 
+ARG TELEGRAM_MCP_REPO=https://github.com/chigwell/telegram-mcp.git
+ARG TELEGRAM_MCP_REF=main
+
 RUN apk add --no-cache git python3 py3-pip && \
-    git clone --depth 1 https://github.com/chigwell/telegram-mcp.git /telegram-mcp-src && \
+    git clone --depth 1 --branch "$TELEGRAM_MCP_REF" "$TELEGRAM_MCP_REPO" /telegram-mcp-src && \
     pip install --no-cache-dir -r /telegram-mcp-src/requirements.txt && \
     rm -rf /telegram-mcp-src/.git
 
